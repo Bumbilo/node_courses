@@ -2,34 +2,31 @@
 const yargs = require('yargs/yargs');
 const {hideBin} = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).argv;
+
 const readLine = require('readline');
+
 const fs = require('fs');
+
 const path = require('path');
 
 const [fileName] = argv._;
-const input = readLine.createInterface(process.stdin);
-const writeStream = fs.createWriteStream( path.join(__dirname, `${fileName}.txt`), { encoding: "utf8"} );
 
-const MAX_VALUE = 2;
-const MIN_VALUE = 1;
+const readStream = fs.createReadStream(path.join(__dirname, `${fileName}.txt`), {encoding: "utf8"});
 
-function getRandomArbitrary(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
-}
+let log = '';
 
-console.log(`Угадайте число в диапазоне от ${MIN_VALUE} до ${MAX_VALUE}`);
+readStream.on('data', (data) => log += data);
 
-input.on('line', (number) => {
-    const guesseNumber = Number(number);
-    const randomNumber = getRandomArbitrary(MIN_VALUE, MAX_VALUE);
+readStream.on('end', () => {
+    const allTries = log.split(';').filter(item => item !== '');
+    console.log(`Общее количество партий: ${allTries.length}`)
 
-    writeStream.write(`${number},${randomNumber};`)
+    const wins = allTries.filter(item => {
+        const [guesNumber, randomNumber] = item.split(',');
+        return guesNumber === randomNumber;
+    })
 
-    const message = guesseNumber !== randomNumber ? `Правельный ответ: ${randomNumber}. Попробуйте еще!` : 'Вы угадали! Попробуйте еще!'
+    console.log(`количество выигранных: ${wins.length} / проигранных партий ${allTries.length - wins.length}`)
+    console.log(`Процентное соотношение выигранных партий: ${Math.round((wins.length / allTries.length) * 100)}`)
+})
 
-    console.log(message);
-});
-
-input.on('close', () => {
-    console.log('Програма закрыта!');
-});
