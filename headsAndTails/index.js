@@ -3,8 +3,6 @@ const yargs = require('yargs/yargs');
 const {hideBin} = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).argv;
 
-const readLine = require('readline');
-
 const fs = require('fs');
 
 const path = require('path');
