@@ -1,0 +1,27 @@
+{
+  "name": "node_courses",
+  "version": "1.0.0",
+  "description": "node courses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "node -r dotenv/config index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bumbilo/node_courses.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bumbilo/node_courses/issues"
+  },
+  "homepage": "https://github.com/Bumbilo/node_courses#readme",
+  "devDependencies": {
+    "dotenv": "^9.0.2"
+  },
+  "dependencies": {
+    "yargs": "^17.0.1"
+  }
+}
