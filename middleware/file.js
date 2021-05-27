@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     }
 });
 
-const allowedTypes = ['txt', 'application/pdf'];
+const allowedTypes = ['text/plain', 'application/pdf'];
 
 const fileFilter = (req, file, cb) => {
     console.log('file', file);
