@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require("body-parser");
+
 const {Book} = require('./models');
 
 const app = express();
@@ -12,11 +13,12 @@ const errorMiddleware = require('./middleware/error');
 const {BASE_URL, PORT} = process.env;
 
 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
+app.set("view engine", "ejs");
 
 app.use('/public', express.static(__dirname + "/public"));
-app.use('/api/book', bookRouter);
+app.use('/book', bookRouter);
 app.use('/user', userRouter);
 app.use('/', indexRouter);
 

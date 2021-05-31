@@ -12,7 +12,6 @@ const storage = multer.diskStorage({
 const allowedTypes = ['text/plain', 'application/pdf'];
 
 const fileFilter = (req, file, cb) => {
-    console.log('file', file);
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true)
     } else {
