@@ -9,8 +9,8 @@ const bookRouter = require('./routes/book');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const errorMiddleware = require('./middleware/error');
+const PORT = process.env.PORT || 3000;
 
-const {BASE_URL, PORT} = process.env;
 
 
 app.use(bodyParser.urlencoded({extended: false}));
