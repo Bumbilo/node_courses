@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  counter:
+    build: ./counter
+    environment:
+      - PORT=3002
+    ports:
+      - 81:3002
+    networks:
+      - counter_net
+    volumes:
+      - ./counter/data:/app/data
+      - ./counter/data/counter_number.json:/app/data/counter_number.json
+  books:
+    build: ./book
+    ports:
+      - 80:3000 
+    networks:
+      - counter_net
+    volumes:
+      - ./book/data:/app/data
+      - ./book/data/books.json:/app/data/books.json
+    environment:
+      - PORT=3000
+      - COUNTER_PORT=3002
+networks:
+  counter_net:
