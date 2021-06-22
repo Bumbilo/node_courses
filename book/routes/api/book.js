@@ -1,48 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const { Book } = require("../models");
-const fileMiddleware = require("../middleware/file");
+const Book = require("../../models/Book");
+const fileMiddleware = require("../../middleware/file");
 
-const store = {
-  books: [],
-};
-
-[1, 2, 3].map((el) => {
-  const newBook = new Book({
-    title: `Book #${el}`,
-    description: `This is description for Book #${el}`,
-    authors: `Author of Book #${el}`,
-    favorite: `${el === 1 ? "favorite" : "not favorite"}`,
-    fileCover: `File cover Book #${el}`,
-    fileName: `./books/Book${el}`,
-  });
-  store.books.push(newBook);
-});
-
-router.get("/", (req, res) => {
-  const { books } = store;
+router.get("/", async (req, res) => {
+  try {
+    const books = await Book.find();
   res.json(books);
-});
-
-router.get("/:id", (req, res) => {
-  const { books } = store;
-  const { id } = req.params;
-  const idx = books.findIndex((el) => el.id === id);
-
-  if (idx !== -1) {
-    res.json(books[idx]);
-  } else {
+  } catch (error) {
     res.sendStatus(404);
   }
 });
 
-router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
-  const { books } = store;
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const book = await Book.findById(id);
+    res.json(book);
+  } catch (error) {
+    res.sendStatus(404);
+  }
+});
+
+router.post("/", fileMiddleware.single("fileBook"), async (req, res) => {
+  try {
   const fileBook = req.file ? req.file.path : "";
-
-  const { title, description, authors, favorite, fileCover, fileName } =
-    req.body;
-
+  const { title, description, authors, favorite, fileCover, fileName } = req.body;
   const newBook = new Book({
     title,
     description,
@@ -52,50 +35,43 @@ router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
     fileName,
     fileBook,
   });
-  books.push(newBook);
+  newBook.save()
   res.json(newBook);
-});
-
-router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
-  const { books } = store;
-
-  const { id } = req.params;
-
-  const idx = books.findIndex((el) => el.id === id);
-
-  if (idx !== -1) {
-    const { title, description, authors, favorite, fileCover, fileName } =
-      req.body;
-
-    const fileBook = req.file ? req.file.path : "";
-
-    books[idx] = {
-      ...books[idx],
-      title,
-      description,
-      authors,
-      favorite,
-      fileCover,
-      fileName,
-      fileBook,
-      id,
-    };
-    res.json(books[idx]);
-  } else {
-    res.sendStatus(404);
+  } catch (error) {
+    res.status(500).json();
   }
 });
 
-router.delete("/:id", (req, res) => {
-  const { books } = store;
-  const { id } = req.params;
-  const idx = books.findIndex((el) => el.id === id);
+router.put("/:id", fileMiddleware.single("fileBook"), async (req, res) => {
 
-  if (idx !== -1) {
-    books.splice(idx, 1);
-    res.json("OK");
-  } else {
-    res.sendStatus(404);
+  try {
+    const { id } = req.params;
+    const fileBook = req.file ? req.file.path : "";
+    const params = {};
+
+    ['title', 'description', 'authors', 'favorite', 'fileCover', 'fileName', 'fileBook'].forEach(props => {
+      if(req.body[props]) {
+        params[props] = req.body[props]
+      }
+    })
+
+    const book = await Book.findByIdAndUpdate(id, params);
+
+    console.log('book', book);
+
+    res.json(book);
+  } catch (error) {
+    res.status(500).json();
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Book.deleteOne({_id: id});
+    res.json(true);
+  } catch (error) {
+    res.status(500).json();
   }
 });
 

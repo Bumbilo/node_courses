@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { Book } = require("../models");
+const Book = require("../models/Book");
 const fileMiddleware = require("../middleware/file");
 const axios = require("axios");
 const fs = require("fs");
 const store = require("../data/books");
 const COUNTER_PORT = process.env.COUNTER_PORT || 3002;
 
-
-router.get("/", (req, res) => {
-  const { books } = store;
+router.get("/", async (req, res) => {
+  const books = await Book.find();
 
   res.render("book/index", {
     title: "Книги",
@@ -49,8 +48,10 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const idx = books.findIndex((el) => el.id === id);
 
-  const bookCounter = await axios.get(`http://counter:${COUNTER_PORT}/counter/${id}`);
-                      await axios.post(`http://counter:${COUNTER_PORT}/counter/${id}/incr`);
+  const bookCounter = await axios.get(
+    `http://counter:${COUNTER_PORT}/counter/${id}`
+  );
+  await axios.post(`http://counter:${COUNTER_PORT}/counter/${id}/incr`);
 
   if (idx !== -1) {
     res.render("book/view", {
