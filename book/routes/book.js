@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Book = require("../models/Book");
 const fileMiddleware = require("../middleware/file");
-const axios = require("axios");
 const fs = require("fs");
 const store = require("../data/books");
-const COUNTER_PORT = process.env.COUNTER_PORT || 3002;
 
 router.get("/", async (req, res) => {
   const books = await Book.find();
@@ -24,44 +22,39 @@ router.get("/create", (req, res) => {
 });
 
 router.post("/create", fileMiddleware.single("fileBook"), (req, res) => {
-  const { books } = store;
-  const fileBook = req.file ? req.file.path : "";
-  const { title, description, authors, favorite, fileCover, fileName } =
-    req.body;
-
-  const newBook = new Book({
-    title,
-    description,
-    authors,
-    favorite,
-    fileCover,
-    fileName,
-    fileBook,
-  });
-  books.push(newBook);
-  fs.writeFileSync("./data/books.json", JSON.stringify(store));
-  res.redirect("/book");
+  try {
+    const fileBook = req.file ? req.file.path : "";
+    const { title, description, authors, favorite, fileCover, fileName } =
+      req.body;
+    const newBook = new Book({
+      title,
+      description,
+      authors,
+      favorite,
+      fileCover,
+      fileName,
+      fileBook,
+    });
+    newBook.save();
+    res.redirect("/book");
+  } catch (error) {
+    res.status(500).json();
+  }
 });
 
 router.get("/:id", async (req, res) => {
-  const { books } = store;
+  try {
   const { id } = req.params;
-  const idx = books.findIndex((el) => el.id === id);
-
-  const bookCounter = await axios.get(
-    `http://counter:${COUNTER_PORT}/counter/${id}`
-  );
-  await axios.post(`http://counter:${COUNTER_PORT}/counter/${id}/incr`);
-
-  if (idx !== -1) {
+  const book = await Book.findById(id);
     res.render("book/view", {
       title: "Книги",
-      book: books[idx],
-      counter: bookCounter.data,
+      book: book,
+      counter: null,
     });
-  } else {
+  } catch (error) {
     res.status(404).redirect("/404");
   }
+
 });
 
 router.get("/update/:id", (req, res) => {

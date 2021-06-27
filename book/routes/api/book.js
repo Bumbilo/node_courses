@@ -57,8 +57,6 @@ router.put("/:id", fileMiddleware.single("fileBook"), async (req, res) => {
 
     const book = await Book.findByIdAndUpdate(id, params);
 
-    console.log('book', book);
-
     res.json(book);
   } catch (error) {
     res.status(500).json();
