@@ -10,21 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookService = void 0;
-const Book_1 = require("./models/Book");
+const book_model_1 = require("./models/book.model");
 class BookService {
     constructor() {
         console.log('new BookService');
     }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const book = new Book_1.Book(data);
+            const book = new book_model_1.BookModel(data);
             yield book.save();
             return book;
         });
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const books = yield Book_1.Book.find();
+            const books = yield book_model_1.BookModel.find();
             return books;
         });
     }

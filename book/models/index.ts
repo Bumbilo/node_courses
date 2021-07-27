@@ -1,4 +1,4 @@
 import { User } from './User';
-import { Book } from './Book';
+import { BookModel } from './book.model';
 
-export {User, Book};
+export { User, BookModel };

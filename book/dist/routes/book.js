@@ -32,7 +32,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Book_1 = require("../models/Book");
+const book_model_1 = require("../models/book.model");
 const file_1 = require("../middleware/file");
 // @ts-ignore
 const store = __importStar(require("../data/books.json"));
@@ -75,7 +75,7 @@ router.post("/create", file_1.fileMiddleware.single("fileBook"), (req, res) => {
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const book = yield Book_1.Book.findById(id);
+        const book = yield book_model_1.BookModel.findById(id);
         console.log(book);
         res.render("book/view", {
             title: "Книги",
@@ -90,7 +90,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 router.get("/update/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const book = yield Book_1.Book.findById(id);
+        const book = yield book_model_1.BookModel.findById(id);
         res.render("book/update", {
             title: "Редактирование",
             book: book,
@@ -110,7 +110,7 @@ router.post("/update/:id", (req, res) => __awaiter(void 0, void 0, void 0, funct
                 params[props] = req.body[props];
             }
         });
-        yield Book_1.Book.findByIdAndUpdate(id, params);
+        yield book_model_1.BookModel.findByIdAndUpdate(id, params);
         res.redirect(`/book/${id}`);
     }
     catch (error) {
@@ -120,7 +120,7 @@ router.post("/update/:id", (req, res) => __awaiter(void 0, void 0, void 0, funct
 router.post("/delete/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield Book_1.Book.deleteOne({ _id: id });
+        yield book_model_1.BookModel.deleteOne({ _id: id });
         res.redirect(`/book`);
         res.json(true);
     }

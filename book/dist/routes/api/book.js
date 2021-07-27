@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const Book_1 = require("../../models/Book");
+const book_model_1 = require("../../models/book.model");
 const file_1 = require("../../middleware/file");
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const books = yield Book_1.Book.find();
+        const books = yield book_model_1.BookModel.find();
         res.json(books);
     }
     catch (error) {
@@ -28,7 +28,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const book = yield Book_1.Book.findById(id);
+        const book = yield book_model_1.BookModel.findById(id);
         res.json(book);
     }
     catch (error) {
@@ -39,7 +39,7 @@ router.post("/", file_1.fileMiddleware.single("fileBook"), (req, res) => __await
     try {
         const fileBook = req.file ? req.file.path : "";
         const { title, description, authors, favorite, fileCover, fileName } = req.body;
-        const newBook = new Book_1.Book({
+        const newBook = new book_model_1.BookModel({
             title,
             description,
             authors,
@@ -65,7 +65,7 @@ router.put("/:id", file_1.fileMiddleware.single("fileBook"), (req, res) => __awa
                 params[props] = req.body[props];
             }
         });
-        const book = yield Book_1.Book.findByIdAndUpdate(id, params);
+        const book = yield book_model_1.BookModel.findByIdAndUpdate(id, params);
         res.json(book);
     }
     catch (error) {
@@ -75,7 +75,7 @@ router.put("/:id", file_1.fileMiddleware.single("fileBook"), (req, res) => __awa
 router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield Book_1.Book.deleteOne({ _id: id });
+        yield book_model_1.BookModel.deleteOne({ _id: id });
         res.json(true);
     }
     catch (error) {

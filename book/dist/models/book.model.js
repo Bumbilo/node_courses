@@ -1,8 +1,8 @@
-
-
-import { Schema, model } from 'mongoose';
-
-const bookSchema = new Schema({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookModel = void 0;
+const mongoose_1 = require("mongoose");
+const bookSchema = new mongoose_1.Schema({
     title: {
         type: String,
         required: true,
@@ -36,5 +36,4 @@ const bookSchema = new Schema({
         default: Date.now,
     }
 });
-
-export const Book = model('Book', bookSchema);
+exports.BookModel = mongoose_1.model('Book', bookSchema);

@@ -1,5 +1,7 @@
+import { BookService } from './../book.service';
 import express from 'express';
-import { Book } from '../models/Book';
+import { BookModel } from '../models/book.model';
+import { Book } from '../shared/interfaces/book';
 import { fileMiddleware } from '../middleware/file';
 // @ts-ignore
 import * as store from '../data/books.json';
@@ -8,8 +10,8 @@ import { container } from '../container';
 const router = express.Router();
 
 router.get("/", async (req: any, res: any) => {
-    const service: any = container.get('BOOK_SERVICE');
-    const books = await service.findAll();
+    const service: BookService = container.get('BOOK_SERVICE');
+    const books: Book[] = await service.findAll();
 
     res.render("book/index", {
         title: "Книги",
@@ -30,7 +32,7 @@ router.post("/create", fileMiddleware.single("fileBook"), (req: any, res: any) =
         const { title, description, authors, favorite, fileCover, fileName } =
             req.body;
 
-        const service: any = container.get('BOOK_SERVICE');
+        const service: BookService = container.get('BOOK_SERVICE');
         service.create({
             title,
             description,
@@ -49,7 +51,7 @@ router.post("/create", fileMiddleware.single("fileBook"), (req: any, res: any) =
 router.get("/:id", async (req: any, res: any) => {
     try {
         const { id } = req.params;
-        const book = await Book.findById(id);
+        const book = await BookModel.findById(id);
         console.log(book)
 
         res.render("book/view", {
@@ -66,7 +68,7 @@ router.get("/:id", async (req: any, res: any) => {
 router.get("/update/:id", async (req: any, res: any) => {
     const { id } = req.params;
     try {
-        const book = await Book.findById(id);
+        const book = await BookModel.findById(id);
         res.render("book/update", {
             title: "Редактирование",
             book: book,
@@ -89,8 +91,8 @@ router.post("/update/:id", async (req: any, res: any) => {
             }
         })
 
-        await Book.findByIdAndUpdate(id, params);
-        res.redirect(`/book/${id}`);
+        await BookModel.findByIdAndUpdate(id, params);
+        res.redirect(`/book/${ id }`);
     } catch (error) {
         res.status(500).json();
     }
@@ -100,7 +102,7 @@ router.post("/update/:id", async (req: any, res: any) => {
 router.post("/delete/:id", async (req: any, res: any) => {
     try {
         const { id } = req.params;
-        await Book.deleteOne({ _id: id });
+        await BookModel.deleteOne({ _id: id });
         res.redirect(`/book`);
         res.json(true);
     } catch (error) {

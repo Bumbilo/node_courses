@@ -1,11 +1,11 @@
 import express from 'express';
 const router = express.Router();
-import { Book } from '../../models/Book';
+import { BookModel } from '../../models/book.model';
 import { fileMiddleware } from '../../middleware/file';
 
 router.get("/", async (req, res) => {
   try {
-    const books = await Book.find();
+    const books = await BookModel.find();
     res.json(books);
   } catch (error) {
     res.sendStatus(404);
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await Book.findById(id);
+    const book = await BookModel.findById(id);
     res.json(book);
   } catch (error) {
     res.sendStatus(404);
@@ -26,7 +26,7 @@ router.post("/", fileMiddleware.single("fileBook"), async (req, res) => {
   try {
     const fileBook = req.file ? req.file.path : "";
     const { title, description, authors, favorite, fileCover, fileName } = req.body;
-    const newBook = new Book({
+    const newBook = new BookModel({
       title,
       description,
       authors,
@@ -55,7 +55,7 @@ router.put("/:id", fileMiddleware.single("fileBook"), async (req, res) => {
       }
     })
 
-    const book = await Book.findByIdAndUpdate(id, params);
+    const book = await BookModel.findByIdAndUpdate(id, params);
 
     res.json(book);
   } catch (error) {
@@ -66,7 +66,7 @@ router.put("/:id", fileMiddleware.single("fileBook"), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    await Book.deleteOne({ _id: id });
+    await BookModel.deleteOne({ _id: id });
     res.json(true);
   } catch (error) {
     res.status(500).json();
