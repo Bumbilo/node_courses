@@ -8,7 +8,9 @@
             <div class="card-body">
                 <h5 class="card-title"><%= book.title %></h5>
                 <p class="card-text"><%= book.description %>.</p>
-                <p class="card-text">Просмотрено: <%= counter %></p>
+                <p class="card-text">Просмотрено: <%= book.counter %></p>
+                <p class="card-text">Авторы: <%= book.authors %></p>
+                <p class="card-text">Дата: <%= book.date %></p>
 
                 <div class="text-right">
                     <a class="btn btn-sm btn-primary" href="/book/update/<%= book.id %>">
